@@ -42,3 +42,20 @@ jobs:
           INTEGRATION_TESTS_USERNAME: ${{ secrets.INTEGRATION_TESTS_USERNAME }}
           INTEGRATION_TESTS_PASSWORD: ${{ secrets.INTEGRATION_TESTS_PASSWORD }}
 
+      - name: Checkout gh-pages branch (for perf stats)
+        if: always()
+        uses: actions/checkout@v3
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Post-process archive to obtain performance metrics and upload to gh-pages
+        if: always()
+        run: |
+          ./Tools/Scripts/parsePerformanceMetrics.sh ~/Library/Logs/scan/IntegrationTests-IntegrationTests.log $GITHUB_SHA | tee perf-results.csv
+          cat perf-results.csv >> $GITHUB_WORKSPACE/gh-pages/performance/perf-data.csv
+          cd $GITHUB_WORKSPACE/gh-pages/performance/
+          git add .
+          git commit -m "Results for $GITHUB_SHA"
+          git push
+
