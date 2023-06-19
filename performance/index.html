@@ -15,17 +15,13 @@
         <td><h2>Login time</h2></td>
       </tr>
       <tr>
-        <td><canvas id="a_launchPerformance"/></td>
-        <td><canvas id="a_loginPerformance"/></td>
-      </tr>
-      <tr>
-        <td><canvas id="t_launchPerformance"/></td>
-        <td><canvas id="t_loginPerformance"/></td>
+        <td><canvas id="launchPerformance"/></td>
+        <td><canvas id="loginPerformance"/></td>
       </tr>
      </table>
   <script>
-  d3.csv('./perf-data.csv').then(makeCharts("a"));
-  d3.csv('https://vector-im.github.io/element-x-ios/performance/perf-data.csv').then(makeCharts("t"));
+  d3.csv('./perf-data.csv').then(makeCharts);
+  
   function floatify(perfdata) {
     return perfdata.map(
       function(d) {
@@ -39,12 +35,12 @@
     );
   }
     
-  function makeCharts(prefix, stringdata) { 
+  function makeCharts(stringdata) { 
     var perfdata = floatify(stringdata);
     var launchPerformance = perfdata.filter(function (d) { return d.Test == "launchPerformance"  });
-    makeChart(launchPerformance, prefix + "_launchPerformance")
+    makeChart(launchPerformance,"launchPerformance")
     var loginPerformance = perfdata.filter(function (d) { return d.Test == "loginPerformance"  });
-    makeChart(loginPerformance, prefix + "_loginPerformance")
+    makeChart(loginPerformance,"loginPerformance")
   }
     
   function makeChart(perfdata, canvas_id) {
