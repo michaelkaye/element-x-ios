@@ -2,7 +2,7 @@ name: Integration tests
 
 on:
   schedule:
-    - cron:  '0 * * * 1-5'
+    - cron:  '0 */2 * * 1-5'
     
   workflow_dispatch:
 
@@ -37,14 +37,14 @@ jobs:
           INTEGRATION_TESTS_USERNAME: ${{ secrets.INTEGRATION_TESTS_USERNAME }}
           INTEGRATION_TESTS_PASSWORD: ${{ secrets.INTEGRATION_TESTS_PASSWORD }}
       
-      - name: Archive artifacts
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: test-output
-          path: fastlane/test_output
-          retention-days: 7
-          if-no-files-found: ignore
+     # - name: Archive artifacts
+    #    uses: actions/upload-artifact@v3
+    #    if: always()
+  #      with:
+   #       name: test-output
+  #        path: fastlane/test_output
+  #        retention-days: 7
+  #        if-no-files-found: ignore
 
       - name: Archive raw log file
         uses: actions/upload-artifact@v3
