@@ -4,17 +4,39 @@
     <script src="https://cdn.jsdelivr.net/npm/luxon@^2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@^1"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
+    <title>element-x-ios perf</title>
   </head>
   <body>
-    <h2>Launch time performance</h2>
-    <div style="width: 800px"><canvas id="launchPerformance"/></div>
-    <h2>Login performance</h2>
-    <div style="width: 800px"><canvas id="loginPerformance"/></div>
+    <h1>Performance metrics from element-x-ios nightly integration runs</h2>
+    <div>Also see the <a href="./perf-data.csv">raw data</a>. Be aware these are not absolute timings, the performance of the github runner will affect the time. Compare them as a relative action only.</div>
+    <table>
+      <tr>
+        <td><h2>Launch time</h2></td>
+        <td><h2>Login time</h2></td>
+      </tr>
+      <tr>
+        <td><canvas id="launchPerformance"/></td>
+        <td><canvas id="loginPerformance"/></td>
+      </tr>
+     </table>
   <script>
   d3.csv('./perf-data.csv').then(makeCharts);
   
+  function floatify(perfdata) {
+    return perfdata.map(
+      function(d) {
+        d.Data1 = parseFloat(d.Data1);
+        d.Data2 = parseFloat(d.Data2);
+        d.Data3 = parseFloat(d.Data3);
+        d.Data4 = parseFloat(d.Data4);
+        d.Data5 = parseFloat(d.Data5);
+        return d
+      }
+    );
+  }
     
-  function makeCharts(perfdata) { 
+  function makeCharts(stringdata) { 
+    var perfdata = floatify(stringdata);
     var launchPerformance = perfdata.filter(function (d) { return d.Test == "launchPerformance"  });
     makeChart(launchPerformance,"launchPerformance")
     var loginPerformance = perfdata.filter(function (d) { return d.Test == "loginPerformance"  });
@@ -23,36 +45,58 @@
     
   function makeChart(perfdata, canvas_id) {
     console.log(perfdata);
+    var maxData = perfdata.map(
+      function(d) { return { x: d.Date, y: Math.max(d.Data1, d.Data2, d.Data3, d.Data4, d.Data5) } });
+    var minData = perfdata.map(
+      function(d) { return { x: d.Date, y: Math.min(d.Data1, d.Data2, d.Data3, d.Data4, d.Data5) } });
+
     var avgData = perfdata.map(
       function(d) {
-        d1 = parseFloat(d.Data1);
-        d2 = parseFloat(d.Data2);
-        d3 = parseFloat(d.Data3);
-        d4 = parseFloat(d.Data4);
-        d5 = parseFloat(d.Data5);
-        console.log(d1,d2,d3,d4,d5);
         return {
           x: d.Date,
-          y: (d1+d2+d3+d4+d5)/5
+          y: (d.Data1 + d.Data2 + d.Data3 + d.Data4 + d.Data5)/5
         }
       }
     );
-    console.log(avgData);
     var chart = new Chart(canvas_id, {
       type: 'line',
       data: {
         datasets: [
           {
-            data: avgData
+            label: "min",
+            data: minData,
+            fill: "+1",
+            borderColor: "#CCFFCC"
+          },
+          {
+            label: "avg",
+            data: avgData,
+            borderColor: "#CCCCFF"
+          },
+          {
+            label: "max",
+            data: maxData,
+            fill: "-1",
+            borderColor: "#FFCCCC"
           }
         ]
       },
       options: {
+        interaction: {
+          intersect: false,
+          mode: 'index', 
+        },
         scales: {
           x: {
             type: 'time',
+            title: "Test run date",
+            display: "true",
             time: {
             }
+          },
+          y: {
+            display: "true",
+            title: "Duration" 
           }
         }
       }
@@ -62,5 +106,3 @@
   </body>
 
 </html>
-  
-    
