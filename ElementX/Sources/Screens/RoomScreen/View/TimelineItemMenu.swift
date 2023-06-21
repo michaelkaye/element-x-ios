@@ -37,6 +37,7 @@ enum TimelineItemMenuAction: Identifiable, Hashable {
     case copyPermalink
     case redact
     case reply
+    case forward(itemID: String)
     case viewSource
     case retryDecryption(sessionID: String)
     case report
@@ -86,8 +87,8 @@ public struct TimelineItemMenu: View {
                 }
             }
         }
-        .background(Color.compound.bgCanvasDefault.ignoresSafeArea())
         .presentationDetents([.medium, .large])
+        .presentationBackground(Color.compound.bgCanvasDefault)
         .presentationDragIndicator(.visible)
     }
     
@@ -164,7 +165,7 @@ public struct TimelineItemMenu: View {
     
     private func reactionBackgroundColor(for emoji: String) -> Color {
         if item.properties.reactions.first(where: { $0.key == emoji }) != nil {
-            return .compound._bgReactionButton
+            return .compound.bgActionPrimaryRest
         } else {
             return .clear
         }
@@ -192,6 +193,10 @@ public struct TimelineItemMenu: View {
             case .reply:
                 Button { send(action) } label: {
                     MenuLabel(title: L10n.actionReply, systemImageName: "arrowshape.turn.up.left")
+                }
+            case .forward:
+                Button { send(action) } label: {
+                    MenuLabel(title: L10n.actionForward, systemImageName: "arrowshape.turn.up.right")
                 }
             case .redact:
                 Button(role: .destructive) { send(action) } label: {

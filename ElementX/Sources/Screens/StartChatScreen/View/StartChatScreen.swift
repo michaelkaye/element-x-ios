@@ -29,6 +29,7 @@ struct StartChatScreen: View {
             }
         }
         .elementFormStyle()
+        .track(screen: .startChat)
         .scrollDismissesKeyboard(.immediately)
         .navigationTitle(L10n.actionStartChat)
         .navigationBarTitleDisplayMode(.inline)
@@ -78,7 +79,7 @@ struct StartChatScreen: View {
     private var inviteFriendsSection: some View {
         Section {
             MatrixUserShareLink(userID: context.viewState.userID) {
-                Label(L10n.actionInviteFriendsToApp(InfoPlistReader.main.bundleDisplayName), systemImage: "square.and.arrow.up")
+                Label(L10n.actionInvitePeopleToApp(InfoPlistReader.main.bundleDisplayName), systemImage: "square.and.arrow.up")
             }
             .buttonStyle(FormButtonStyle())
             .accessibilityIdentifier(A11yIdentifiers.startChatScreen.inviteFriends)

@@ -32,6 +32,7 @@ struct CreateRoomScreen: View {
             securitySection
         }
         .elementFormStyle()
+        .track(screen: .createRoom)
         .scrollDismissesKeyboard(.immediately)
         .navigationTitle(L10n.screenCreateRoomTitle)
         .navigationBarTitleDisplayMode(.inline)
@@ -187,7 +188,7 @@ struct CreateRoomScreen: View {
                 .formSectionHeader()
                 .padding(.top, 40)
         }
-        .listRowSeparatorTint(.compound._borderRowSeparator)
+        .listRowSeparatorTint(.compound.borderDisabled)
         .listRowBackground(Color.element.formRowBackground)
     }
     
